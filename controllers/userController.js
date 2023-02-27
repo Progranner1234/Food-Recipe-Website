@@ -73,9 +73,7 @@ const register = async (req, res) => {
     let email = req.body.email;
     let checkUser = await userSchema.findOne({ email: email });
     if (!checkUser) {
-      console.log("User not Exists")
       let token = jwt.sign({ email: email }, process.env.SECRET_KEY);
-      console.log("Token", token);
       const hashPassword = await bcryptPassword(req.body.password);
       let saveUser = new userSchema({
         name: req.body.name,
@@ -101,6 +99,7 @@ const register = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send(err.message);
+    console.log(err)
   }
 };
 
@@ -137,6 +136,7 @@ const login = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send(err.message);
+    console.log(err)
   }
 };
 
