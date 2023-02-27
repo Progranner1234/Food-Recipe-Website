@@ -10,7 +10,7 @@ const bcryptPassword = async (password) => {
     let hashPassword = await bcryptjs.hash(password, 12);
     return hashPassword;
   } catch (err) {
-    console.log("line 9", err.message);
+    console.log("line", err.message);
   }
 };
 
