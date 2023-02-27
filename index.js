@@ -6,7 +6,6 @@ const user_route = require('./routes/userRoutes');
 require('./database/connection')
 const recipe_routes = require('./routes/recipeRoutes')
 const path = require('path')
-const clinet = require('../client/dist')
 
 app.use(express.json())
 app.use(cors({credentials:true , origin:true}))
@@ -15,9 +14,9 @@ app.use('/images',express.static('images'))
 app.use('/api/v1' , user_route)
 app.use('/api/v1',recipe_routes)
 
-app.use(express.static(path.join(__dirname,'../client/dist')))
+app.use(express.static(path.join(__dirname,'./client/dist')))
 app.get('*',function(req , res){
-    res.sendFile(path.join(__dirname , '../client/dist/index.html'))
+    res.sendFile(path.join(__dirname , './client/dist/index.html'))
 })
 
 app.listen(process.env.PORT , ()=> {
