@@ -1,7 +1,7 @@
 const limitApiAccess = async(req , res , next)=> {
     try {
         let origin = req.get('Origin')
-        if(origin === "http://localhost:5173"){
+        if(origin === "https://recipe-mern-app.onrender.com/"){
             next();
         }else{
             res.render('unAuthorised')
