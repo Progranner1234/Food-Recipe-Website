@@ -31,7 +31,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
    <div style={"width:100%;marginTop:20px;"}>
    <p style={"color:white"}> Hii Admin ${name} </p> 
    <p>Let's reset your password so you can get back to enjoying foods</p>
-   <a href="http://localhost:4000/api/v1/admin/reset-password/${role}/${id}/${token}">
+   <a href="https://recipe-mern-app.onrender.com/api/v1/admin/reset-password/${role}/${id}/${token}">
    <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
    </div>
    </div>`
@@ -40,7 +40,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
   <div style={"width:100%;marginTop:20px;"}>
   <p style={"color:white"}> Hii ${name} </p> 
   <p>Let's reset your password so you can get back to enjoying foods</p>
-  <a href="http://localhost:4000/api/v1/reset-password/${role}/${id}/${token}">
+  <a href="https://recipe-mern-app.onrender.com/api/v1/reset-password/${role}/${id}/${token}">
   <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
   </div>
   </div>`;
@@ -86,7 +86,7 @@ const register = async (req, res) => {
       res.cookie("EaseRecipies", token, {
         expire: new Date(Date.now() + 25892000000),
         httpOnly: true,
-        secure: false,
+        secure:true,
       });
 
       res.status(201).send({
@@ -112,12 +112,12 @@ const login = async (req, res) => {
     let verifyUser = await userSchema.findOne({ email: email });
     let verifyAdmin = await adminSchema.findOne({ email: email });
 
-    if (verifyAdmin) {
-      user = verifyAdmin;
-      secret_key = process.env.ADMIN_SECRET_KEY;
-    } else if (verifyUser) {
+    if (verifyUser) {
       user = verifyUser;
       secret_key = process.env.SECRET_KEY;
+    } else if (verifyAdmin) {
+       user = verifyAdmin;
+      secret_key = process.env.ADMIN_SECRET_KEY;
     } else {
      return  res.status(404).send({ success: false, error: "No User Found" });
     }
@@ -128,7 +128,7 @@ const login = async (req, res) => {
       res.cookie("EaseRecipies",token,{
         expires:new Date(Date.now()+ 25892000000),
         httpOnly:true,
-        secure:false
+        secure:true
     })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
     } else {
