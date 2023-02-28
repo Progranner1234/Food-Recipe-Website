@@ -83,11 +83,16 @@ const register = async (req, res) => {
 
       await saveUser.save();
 
-      res.cookie("EaseRecipies", token, {
-        expire: new Date(Date.now() + 25892000000),
+      const expirationDate = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000); // 20 days in milliseconds
+      res.cookie('EaseRecipies', token, {
         httpOnly: true,
-        secure:true,
+        secure: true,
+        expires: expirationDate,
+        sameSite: 'strict',
+        path: '/',
+        domain: 'https://recipe-mern-app.onrender.com/',
       });
+      
 
       res.status(201).send({
         success: true,
@@ -105,23 +110,24 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    let user;
-    let secret_key;
+   
+    let secret_key = process.env.SECRET_KEY
     let email = req.body.email;
     let password = req.body.password;
-    let verifyUser = await userSchema.findOne({ email: email });
-    let verifyAdmin = await adminSchema.findOne({ email: email });
-
-    if (verifyUser) {
-      user = verifyUser;
-      secret_key = process.env.SECRET_KEY;
-    } else if (verifyAdmin) {
-       user = verifyAdmin;
-      secret_key = process.env.ADMIN_SECRET_KEY;
-    } else {
-     return  res.status(404).send({ success: false, error: "No User Found" });
-    }
+    let user = await userSchema.findOne({ email: email });
     
+
+    // if (verifyUser) {
+    //   user = verifyUser;
+    //   secret_key = process.env.SECRET_KEY;
+    // } else if (verifyAdmin) {
+    //    user = verifyAdmin;
+    //   secret_key = process.env.ADMIN_SECRET_KEY;
+    // } else {
+    //  return  res.status(404).send({ success: false, error: "No User Found" });
+    // }
+    
+   if(user){
     let verifyPassword =  await bcryptjs.compare(password, user.password);
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
@@ -134,6 +140,9 @@ const login = async (req, res) => {
     } else {
       res.status(401).send({ success: false, error: "Invalid Credentials" });
     }
+   }else{
+   res.status(404).send({ success: false, error: "No User Found" });
+   }
   } catch (err) {
     res.status(500).send(err.message);
     console.log(err)
