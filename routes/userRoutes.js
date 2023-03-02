@@ -18,7 +18,7 @@ user_route.post('/reset-password/:role/:id/:token',userController.resetPassword)
 user_route.get('/success',limitApiAccess,async(req , res)=> {res.render('success')})
 user_route.delete('/remove-from-fevorates/:name',limitApiAccess , userMiddleware , userController.removeFromFevorates)
 user_route.put('/update-image-url/:name',limitApiAccess , userMiddleware, userController.updateImage)
-user_route.get('/logout' , limitApiAccess , userController.logout)
+user_route.get('/logout' , userController.logout)
 
 
 module.exports  = user_route;
