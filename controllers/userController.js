@@ -66,9 +66,7 @@ const register = async (req, res) => {
       res.cookie("easerecipe", token, {
         expires: new Date(Date.now() + 1728000000), // 20 days
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        domain: "https://recipe-mern-app.onrender.com/"
+        secure: true
       })
       res.status(201).send({
         success: true,
@@ -108,8 +106,7 @@ const login = async (req, res) => {
       res.cookie("easerecipe",token,{
             expires:new Date(Date.now()+ 1728000000),
             httpOnly:true,
-            secure:true,
-            domain: "https://recipe-mern-app.onrender.com/"
+            secure:true
         })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
     } else {
