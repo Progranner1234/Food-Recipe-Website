@@ -160,7 +160,7 @@ const login = async (req, res) => {
     // })
 
       res.cookie("easerecipe",token,{
-            expires:new Date(Date.now()+ 25892000000),
+            expires:new Date(Date.now()+ 1728000000),
             httpOnly:true,
             secure:true,
             domain: "https://recipe-mern-app.onrender.com/"
