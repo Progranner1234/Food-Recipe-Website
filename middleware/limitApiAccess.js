@@ -4,7 +4,7 @@ const limitApiAccess = async(req , res , next)=> {
         if(origin === "https://recipe-mern-app.onrender.com/"){
             next();
         }else{
-            res.render('unAuthorised')
+           res.status(401).send({error:"Unauthorised User"})
         }
     } catch (err) {
         res.status(500).send(err.message)

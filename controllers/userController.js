@@ -6,36 +6,17 @@ const userSchema = require("../models/userSchema");
 
 
 const bcryptPassword = async (password) => {
-  try {
     let hashPassword = await bcryptjs.hash(password, 12);
     return hashPassword;
-  } catch (err) {
-    console.log("line 9", err.message);
-  }
-};
+}
 
 const generateAuthToken = async (email, key) => {
-  try {
     let token = jwt.sign({ email: email }, key);
     return token;
-  } catch (err) {
-    console.log("Line 20", err.message);
-  }
 };
 
 const sendResetPasswordMail = async (name, email, token, id, role) => {
-  const html =
-    role === "admin"
-      ? `<div style="width:100vw;height:100vh;padding:"20px;display:flex;align-item:"center;justify-content:center">
-    <h2>Reset Your Password</h2>
-   <div style={"width:100%;marginTop:20px;"}>
-   <p style={"color:white"}> Hii Admin ${name} </p> 
-   <p>Let's reset your password so you can get back to enjoying foods</p>
-   <a href="http://localhost:4000/api/v1/admin/reset-password/${role}/${id}/${token}">
-   <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
-   </div>
-   </div>`
-      : `<div style="width:100vw;height:100vh;padding:"20px;display:flex;align-item:"center;justify-content:center">
+  const html =  `<div style="width:100vw;height:100vh;padding:"20px;display:flex;align-item:"center;justify-content:center">
    <h2>Reset Your Password</h2>
   <div style={"width:100%;marginTop:20px;"}>
   <p style={"color:white"}> Hii ${name} </p> 
@@ -43,7 +24,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
   <a href="https://recipe-mern-app.onrender.com/api/v1/reset-password/${role}/${id}/${token}">
   <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
   </div>
-  </div>`;
+  </div>`
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -69,7 +50,6 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
 };
 
 const register = async (req, res) => {
-  console.log("REGISTERING STARTED")
   try {
     let email = req.body.email;
     let checkUser = await userSchema.findOne({ email: email });
@@ -83,13 +63,6 @@ const register = async (req, res) => {
       });
 
       await saveUser.save();
-
-      // res.cookie("EaseRecipies", token, {
-      //   expire: new Date(Date.now() + 25892000000),
-      //   httpOnly: true,
-      //   secure:true,
-      // });
-
       res.cookie("easerecipe", token, {
         expires: new Date(Date.now() + 1728000000), // 20 days
         httpOnly: true,
@@ -97,31 +70,21 @@ const register = async (req, res) => {
         sameSite: "none",
         domain: "https://recipe-mern-app.onrender.com/"
       })
-
-      console.log("TOKEN",token)
-      console.log("HASHPASSWORD",hashPassword)
-
       res.status(201).send({
         success: true,
         msg: "User Registered Successfully",
         token: token,
       });
-
-      console.log("USER REGISTED SUCCESSFULLY")
     } else {
-      console.log("USER ALREADY EXISTS")
       res.status(409).send({ success: true, error: "User Already Exists" });
     }
   } catch (err) {
     res.status(500).send(err.message);
-    console.log(err)
   }
 };
 
 const login = async (req, res) => {
-  console.log("LOGIN API ACTIVATED")
-  try {8
-  console.log("INSIDE LOGIN API")
+  try {
     let user;
     let secret_key;
     let email = req.body.email;
@@ -140,42 +103,20 @@ const login = async (req, res) => {
     }
     
     let verifyPassword =  await bcryptjs.compare(password, user.password);
-     console.log("PASSWORD",password)
-     console.log("EMAIL",email)
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
-
-    //   res.cookie("EaseRecipies",token,{
-    //     expires:new Date(Date.now()+ 25892000000),
-    //     httpOnly:true,
-    //     secure:true
-    // })
-
-    // res.cookie("EaseRecipies", token, {
-    //   expires: new Date(Date.now() + 1728000000), // 20 days
-    //   httpOnly: true,
-    //   secure:false,
-    //   sameSite: "none",
-    //   domain: "https://recipe-mern-app.onrender.com/"
-    // })
-
       res.cookie("easerecipe",token,{
             expires:new Date(Date.now()+ 1728000000),
             httpOnly:true,
             secure:true,
             domain: "https://recipe-mern-app.onrender.com/"
         })
-
-
        res.status(200).send({ success: true, msg: "User Login Successfully" });
-       console.log("LOGIN SUCCESS")
     } else {
       res.status(401).send({ success: false, error: "Invalid Credentials" });
-      console.log("INVALID CRADENTIALS")
     }
   } catch (err) {
     res.status(500).send({success:false , error:err.message});
-    console.log("ERROR OCCURED")
     
   }
 };
@@ -215,9 +156,9 @@ const forgotPassword = async (req, res) => {
     );
 
     
-      res.clearCookie("EaseRecipies", {
+      res.clearCookie("easerecipe", {
         path:"/",
-        secure:false,
+        secure:true,
         httpOnly:true
       });
     
@@ -230,7 +171,6 @@ const forgotPassword = async (req, res) => {
       });
   } catch (err) {
     res.status(500).send(err.message);
-    console.log(err)
   }
 };
 
@@ -251,7 +191,6 @@ const resetPasswordClient = async(req , res)=> {
      }
 
      let checkToken =  jwt.verify(token , secret_key)
-     console.log(token)
      if(checkToken){
       let verifyToken = await schema.findOne({_id:id , "resetPasswordLinks.token":token},{"resetPasswordLinks.$":1})
       if(verifyToken.resetPasswordLinks[0].expire !== true){
@@ -265,7 +204,6 @@ const resetPasswordClient = async(req , res)=> {
      }
     } catch (err) {
       res.render('invalidLink')
-       console.log(err)
     }
 };
 
@@ -296,7 +234,6 @@ const resetPassword = async(req , res)=> {
 const changePassword = async(req , res)=> {
   try {
     let user = req.userData;
-    console.log(user.password)
     let password = req.body.password;
     let newPassword = req.body.newPassword;
 
@@ -311,7 +248,6 @@ const changePassword = async(req , res)=> {
 
   } catch (err) {
     res.status(500).send(err.message)
-    console.log(err)
   }
 }
 
@@ -338,7 +274,6 @@ const removeFromFevorates = async(req , res)=> {
     let removeRecipe = await userSchema.updateOne(
       {_id: user._id},
       {$pull:{fevorates:{label:name}}})
-    console.log(removeRecipe) 
     if(removeRecipe.modifiedCount === 1){
       res.status(200).send({success:true , msg:"Item Removed Successfully"})
     }else{
@@ -346,7 +281,6 @@ const removeFromFevorates = async(req , res)=> {
     }
   } catch (err) {
     res.status(500).send(err.message)
-    console.log(err)
   }
 }
 
@@ -398,9 +332,9 @@ const updateImage = async(req , res)=> {
 
 const logout = async(req , res)=> {
   try { 
-    res.clearCookie("EaseRecipies", {
+    res.clearCookie("easerecipe", {
       path:"/",
-      secure:false,
+      secure:true,
       httpOnly:true
     });
     res.status(200).send({success:true , msg:"User Logout Successfully"})
