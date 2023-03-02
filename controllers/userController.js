@@ -103,14 +103,13 @@ const register = async (req, res) => {
       res.status(409).send({ success: true, error: "User Already Exists" });
     }
   } catch (err) {
-    res.status(500).send(err.message);
-    console.log(err)
+    res.status(500).send({success:false , error:err.message});
   }
 };
 
 const login = async (req, res) => {
   try {
-   
+   console.log("LOGIN API CALLED")
     let secret_key = process.env.SECRET_KEY
     let email = req.body.email;
     let password = req.body.password;
@@ -128,6 +127,7 @@ const login = async (req, res) => {
     // }
     
    if(user){
+    console.log("INSIDE API")
     let verifyPassword =  await bcryptjs.compare(password, user.password);
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
@@ -137,15 +137,16 @@ const login = async (req, res) => {
         secure:true
     })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
+       console.log("LOGIN SUCCESSFULLY")
     } else {
-      res.status(401).send({ success: false, error: "Invalid Credentials" });
+      console.log("INVALID CREDENTIALS")
+     return  res.status(401).send({ success: false, error: "Invalid Credentials" });
     }
    }else{
-   res.status(404).send({ success: false, error: "No User Found" });
+  return  res.status(404).send({ success: false, error: "No User Found" });
    }
   } catch (err) {
-    res.status(500).send(err.message);
-    console.log(err)
+    res.status(500).send({success:false , err:err.message});
   }
 };
 

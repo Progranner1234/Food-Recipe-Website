@@ -1,5 +1,4 @@
 const {Configuration , OpenAIApi } = require('openai')
-console.log(process.env.OPENAI_API_KEY)
 
 const configuration = new Configuration({
     organization:"org-9bdXtbo51KpQZo8tb2NnaQ99",
