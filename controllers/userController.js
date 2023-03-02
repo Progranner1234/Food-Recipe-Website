@@ -151,13 +151,21 @@ const login = async (req, res) => {
     //     secure:true
     // })
 
-    res.cookie("EaseRecipies", token, {
-      expires: new Date(Date.now() + 1728000000), // 20 days
-      httpOnly: true,
-      secure:false,
-      sameSite: "none",
-      domain: "https://recipe-mern-app.onrender.com/"
-    })
+    // res.cookie("EaseRecipies", token, {
+    //   expires: new Date(Date.now() + 1728000000), // 20 days
+    //   httpOnly: true,
+    //   secure:false,
+    //   sameSite: "none",
+    //   domain: "https://recipe-mern-app.onrender.com/"
+    // })
+
+      res.cookie("jwtoken",token,{
+            expires:new Date(Date.now()+ 25892000000),
+            httpOnly:true,
+            secure:false
+        })
+
+        
        res.status(200).send({ success: true, msg: "User Login Successfully" });
        console.log("LOGIN SUCCESS")
     } else {
