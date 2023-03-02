@@ -40,7 +40,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
   <div style={"width:100%;marginTop:20px;"}>
   <p style={"color:white"}> Hii ${name} </p> 
   <p>Let's reset your password so you can get back to enjoying foods</p>
-  <a href="http://localhost:4000/api/v1/reset-password/${role}/${id}/${token}">
+  <a href="https://recipe-mern-app.onrender.com/api/v1/reset-password/${role}/${id}/${token}">
   <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
   </div>
   </div>`;
@@ -69,6 +69,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
 };
 
 const register = async (req, res) => {
+  console.log("REGISTERING STARTED")
   try {
     let email = req.body.email;
     let checkUser = await userSchema.findOne({ email: email });
@@ -86,15 +87,21 @@ const register = async (req, res) => {
       res.cookie("EaseRecipies", token, {
         expire: new Date(Date.now() + 25892000000),
         httpOnly: true,
-        secure: false,
+        secure:true,
       });
+
+      console.log("TOKEN",token)
+      console.log("HASHPASSWORD",hashPassword)
 
       res.status(201).send({
         success: true,
         msg: "User Registered Successfully",
         token: token,
       });
+
+      console.log("USER REGISTED SUCCESSFULLY")
     } else {
+      console.log("USER ALREADY EXISTS")
       res.status(409).send({ success: true, error: "User Already Exists" });
     }
   } catch (err) {
@@ -105,7 +112,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   console.log("LOGIN API ACTIVATED")
-  try {
+  try {8
   console.log("INSIDE LOGIN API")
     let user;
     let secret_key;
@@ -129,10 +136,11 @@ const login = async (req, res) => {
      console.log("EMAIL",email)
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
+
       res.cookie("EaseRecipies",token,{
         expires:new Date(Date.now()+ 25892000000),
         httpOnly:true,
-        secure:false
+        secure:true
     })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
        console.log("LOGIN SUCCESS")
