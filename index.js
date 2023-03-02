@@ -13,6 +13,7 @@ app.set('view engine','ejs');
 app.use('/images',express.static('images'))
 app.use('/api/v1' , user_route)
 app.use('/api/v1',recipe_routes)
+app.set("trust proxy",1)
 
 app.use(express.static(path.join(__dirname,'./client/dist')))
 app.get('*',function(req , res){
