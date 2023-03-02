@@ -84,11 +84,19 @@ const register = async (req, res) => {
 
       await saveUser.save();
 
+      // res.cookie("EaseRecipies", token, {
+      //   expire: new Date(Date.now() + 25892000000),
+      //   httpOnly: true,
+      //   secure:true,
+      // });
+
       res.cookie("EaseRecipies", token, {
-        expire: new Date(Date.now() + 25892000000),
+        expires: new Date(Date.now() + 1728000000), // 20 days
         httpOnly: true,
-        secure:true,
-      });
+        secure: true,
+        sameSite: "none",
+        domain: "https://recipe-mern-app.onrender.com/"
+      })
 
       console.log("TOKEN",token)
       console.log("HASHPASSWORD",hashPassword)
@@ -137,10 +145,18 @@ const login = async (req, res) => {
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
 
-      res.cookie("EaseRecipies",token,{
-        expires:new Date(Date.now()+ 25892000000),
-        httpOnly:true,
-        secure:true
+    //   res.cookie("EaseRecipies",token,{
+    //     expires:new Date(Date.now()+ 25892000000),
+    //     httpOnly:true,
+    //     secure:true
+    // })
+
+    res.cookie("EaseRecipies", token, {
+      expires: new Date(Date.now() + 1728000000), // 20 days
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: "https://recipe-mern-app.onrender.com/"
     })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
        console.log("LOGIN SUCCESS")
