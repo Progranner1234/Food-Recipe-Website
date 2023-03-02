@@ -3,7 +3,7 @@ const userSchema = require('../models/userSchema')
 
 const userMiddleware = async(req , res , next)=> {
     try {
-        let token  = req.cookies.EaseRecipies
+        let token  = req.cookies.easerecipe
         if(!token){
             req.userData = null;
             res.status(401).send({success:false , msg:"User Unauthorised"})
