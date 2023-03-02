@@ -10,7 +10,7 @@ const bcryptPassword = async (password) => {
     let hashPassword = await bcryptjs.hash(password, 12);
     return hashPassword;
   } catch (err) {
-    console.log("line", err.message);
+    console.log("line 9", err.message);
   }
 };
 
@@ -31,7 +31,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
    <div style={"width:100%;marginTop:20px;"}>
    <p style={"color:white"}> Hii Admin ${name} </p> 
    <p>Let's reset your password so you can get back to enjoying foods</p>
-   <a href="https://recipe-mern-app.onrender.com/api/v1/admin/reset-password/${role}/${id}/${token}">
+   <a href="http://localhost:4000/api/v1/admin/reset-password/${role}/${id}/${token}">
    <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
    </div>
    </div>`
@@ -40,7 +40,7 @@ const sendResetPasswordMail = async (name, email, token, id, role) => {
   <div style={"width:100%;marginTop:20px;"}>
   <p style={"color:white"}> Hii ${name} </p> 
   <p>Let's reset your password so you can get back to enjoying foods</p>
-  <a href="https://recipe-mern-app.onrender.com/api/v1/reset-password/${role}/${id}/${token}">
+  <a href="http://localhost:4000/api/v1/reset-password/${role}/${id}/${token}">
   <button style={"width:100%;padding:12px;font-size:17px;color:white;background:#008ee6;margin-top:20px"}>Reset Your Password</button> </a>
   </div>
   </div>`;
@@ -73,7 +73,7 @@ const register = async (req, res) => {
     let email = req.body.email;
     let checkUser = await userSchema.findOne({ email: email });
     if (!checkUser) {
-      let token = jwt.sign({ email: email }, process.env.SECRET_KEY);
+      let token = await jwt.sign({ email: email }, process.env.SECRET_KEY);
       const hashPassword = await bcryptPassword(req.body.password);
       let saveUser = new userSchema({
         name: req.body.name,
@@ -83,16 +83,11 @@ const register = async (req, res) => {
 
       await saveUser.save();
 
-      const expirationDate = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000); // 20 days in milliseconds
-      res.cookie('EaseRecipies', token, {
+      res.cookie("EaseRecipies", token, {
+        expire: new Date(Date.now() + 25892000000),
         httpOnly: true,
-        secure: true,
-        expires: expirationDate,
-        sameSite: 'strict',
-        path: '/',
-        domain: 'https://recipe-mern-app.onrender.com/',
+        secure: false,
       });
-      
 
       res.status(201).send({
         success: true,
@@ -103,50 +98,52 @@ const register = async (req, res) => {
       res.status(409).send({ success: true, error: "User Already Exists" });
     }
   } catch (err) {
-    res.status(500).send({success:false , error:err.message});
+    res.status(500).send(err.message);
+    console.log(err)
   }
 };
 
 const login = async (req, res) => {
+  console.log("LOGIN API ACTIVATED")
   try {
-   console.log("LOGIN API CALLED")
-    let secret_key = process.env.SECRET_KEY
+  console.log("INSIDE LOGIN API")
+    let user;
+    let secret_key;
     let email = req.body.email;
     let password = req.body.password;
-    let user = await userSchema.findOne({ email: email });
-    
+    let verifyUser = await userSchema.findOne({ email: email });
+    let verifyAdmin = await adminSchema.findOne({ email: email });
 
-    // if (verifyUser) {
-    //   user = verifyUser;
-    //   secret_key = process.env.SECRET_KEY;
-    // } else if (verifyAdmin) {
-    //    user = verifyAdmin;
-    //   secret_key = process.env.ADMIN_SECRET_KEY;
-    // } else {
-    //  return  res.status(404).send({ success: false, error: "No User Found" });
-    // }
+    if (verifyAdmin) {
+      user = verifyAdmin;
+      secret_key = process.env.ADMIN_SECRET_KEY;
+    } else if (verifyUser) {
+      user = verifyUser;
+      secret_key = process.env.SECRET_KEY;
+    } else {
+     return  res.status(404).send({ success: false, error: "No User Found" });
+    }
     
-   if(user){
-    console.log("INSIDE API")
     let verifyPassword =  await bcryptjs.compare(password, user.password);
+     console.log("PASSWORD",password)
+     console.log("EMAIL",email)
     if (verifyPassword) {
       let token = await generateAuthToken(email, secret_key);
       res.cookie("EaseRecipies",token,{
         expires:new Date(Date.now()+ 25892000000),
         httpOnly:true,
-        secure:true
+        secure:false
     })
        res.status(200).send({ success: true, msg: "User Login Successfully" });
-       console.log("LOGIN SUCCESSFULLY")
+       console.log("LOGIN SUCCESS")
     } else {
-      console.log("INVALID CREDENTIALS")
-     return  res.status(401).send({ success: false, error: "Invalid Credentials" });
+      res.status(401).send({ success: false, error: "Invalid Credentials" });
+      console.log("INVALID CRADENTIALS")
     }
-   }else{
-  return  res.status(404).send({ success: false, error: "No User Found" });
-   }
   } catch (err) {
-    res.status(500).send({success:false , err:err.message});
+    res.status(500).send({success:false , error:err.message});
+    console.log("ERROR OCCURED")
+    
   }
 };
 
