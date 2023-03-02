@@ -8,7 +8,7 @@ const limitApiAccess = require('../middleware/limitApiAccess')
 
 user_route.post('/register', userController.register)
 user_route.post('/login',  userController.login)
-user_route.get('/user-data',limitApiAccess , userMiddleware , userController.checkUser)
+user_route.get('/user-data' , userMiddleware , userController.checkUser)
 user_route.post('/edit-name' , limitApiAccess , userMiddleware , userController.editName)
 user_route.put('/add-to-fevorates' , limitApiAccess , userMiddleware , userController.addToFevorate)
 user_route.post('/change-password',limitApiAccess , userMiddleware , userController.changePassword)
