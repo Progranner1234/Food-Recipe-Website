@@ -5,6 +5,7 @@ recipe_routes.use(cookieParser())
 const recipeController = require('../controllers/recipeController')
 
 recipe_routes.post('/recipe',recipeController.getRecipe)
+recipe_routes.post('/get-nutrients',recipeController.getNutritionValue)
 
 
 
