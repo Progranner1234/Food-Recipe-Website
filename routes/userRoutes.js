@@ -15,7 +15,7 @@ user_route.post('/change-password',limitApiAccess , userMiddleware , userControl
 user_route.post('/forgot-password',limitApiAccess,userController.forgotPassword)
 user_route.get('/reset-password/:role/:id/:token',userController.resetPasswordClient)
 user_route.post('/reset-password/:role/:id/:token',userController.resetPassword)
-user_route.get('/success',limitApiAccess,async(req , res)=> {res.render('success')})
+user_route.get('/success',async(req , res)=> {res.render('success')})
 user_route.delete('/remove-from-fevorates/:name',limitApiAccess , userMiddleware , userController.removeFromFevorates)
 user_route.put('/update-image-url/:name',limitApiAccess , userMiddleware, userController.updateImage)
 user_route.get('/logout' , userController.logout)
